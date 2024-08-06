@@ -1,16 +1,23 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SubjectController } from './subject/subject.controller';
-import { SubjectService } from './subject/subject.service';
 import { SubjectModule } from './subject/subject.module';
-import { LevelService } from './level/level.service';
 import { LevelModule } from './level/level.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [SubjectModule,LevelModule],
+  imports: [SubjectModule,LevelModule,,TypeOrmModule.forRoot({
+    type: 'mariadb',
+    host: 'localhost',
+    port: 3306,
+    username: 'root',
+    password: 'root',
+    database: 'mentor',
+    entities: [],
+    synchronize: true,
+  })],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {
   
