@@ -2,17 +2,22 @@ import { Controller,Get, Body,Post, Param } from '@nestjs/common';
 import {InterfaceSubject,InterfacePostSubject} from "./subjects"
 import {SubjectService} from "./subject.service"
 import {SUBJECTS} from "./bdd"
+import { InjectRepository } from '@nestjs/typeorm';
+import { SubjectEntity } from './entities/subject.entity';
+import { Repository } from 'typeorm';
 
 @Controller('subject')
 export class SubjectController {
 
-    constructor(private readonly SubjectService : SubjectService ){
+    constructor(private readonly SubjectService : SubjectService,
+        @InjectRepository(SubjectEntity) private SubjectRepository : Repository<SubjectEntity>
+     ){
 
     }
 
     @Get("findall")
-    findAll() : InterfaceSubject[] {
-        return this.SubjectService.findAll()
+    async findAll() : Promise<SubjectEntity[]>{
+        return await this.SubjectService.findAll()
     }
 
     // @Post("addsubject")
@@ -21,9 +26,14 @@ export class SubjectController {
     // }
 
     @Get("find/:id")
-    findOneById(@Param() param) : InterfaceSubject | string{
+    async findOneById(@Param() param : {id : number}) : Promise<SubjectEntity | string>{
         const id = param.id
-        return this.SubjectService.findOneById(id)
+        return await this.SubjectService.findOneById(id)
+    }
+
+    @Post()
+    async createSubject(@Body() body : {name : string}) : Promise<SubjectEntity>{
+        return await this.SubjectService.createSubject(body.name)
     }
     
 }
